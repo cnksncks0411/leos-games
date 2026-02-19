@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스무고개 - 레오네 보드게임</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- 로그인 화면 -->
+        <div id="login-screen" class="screen active">
+            <div class="card fade-in">
+                <h1>스무고개</h1>
+                <p class="subtitle">20번의 기회, 정답을 찾아라!</p>
+
+                <div class="input-group">
+                    <label>닉네임</label>
+                    <input type="text" id="nickname-input" placeholder="이름을 입력하세요" maxlength="10">
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="create">방 만들기</button>
+                    <button class="tab-btn" data-tab="join">방 참가하기</button>
+                </div>
+
+                <div id="create-tab" class="tab-content active">
+                    <div class="input-group">
+                        <label>인원 수</label>
+                        <select id="player-count-select">
+                            <option value="2">2명</option>
+                            <option value="3">3명</option>
+                            <option value="4" selected>4명</option>
+                            <option value="5">5명</option>
+                            <option value="6">6명</option>
+                        </select>
+                    </div>
+                    <button id="create-room-btn" class="primary-btn">방 만들기</button>
+                </div>
+
+                <div id="join-tab" class="tab-content">
+                    <div class="input-group">
+                        <label>방 코드</label>
+                        <input type="text" id="room-code-input" placeholder="1234" maxlength="4">
+                    </div>
+                    <button id="join-room-btn" class="primary-btn">참가하기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 대기실 화면 -->
+        <div id="lobby-screen" class="screen">
+            <div class="card fade-in">
+                <div class="room-header">
+                    <h2>대기실</h2>
+                    <span id="room-id-display" class="badge">CODE: ----</span>
+                </div>
+
+                <div class="player-list" id="lobby-player-list">
+                    <!-- 플레이어 목록 동적 생성 -->
+                </div>
+
+                <div class="status-msg" id="lobby-status">대기 중...</div>
+
+                <button id="start-game-btn" class="primary-btn hidden">게임 시작</button>
+            </div>
+        </div>
+
+        <!-- 게임 화면 -->
+        <div id="game-screen" class="screen">
+            <div class="game-container">
+                <!-- 상단 정보 -->
+                <header class="game-header">
+                    <div class="round-info">ROUND <span id="current-round">1</span></div>
+                    <div class="turn-info">기회 <span id="turn-count">0</span> / 20</div>
+                </header>
+
+                <!-- 메인 영역 -->
+                <main class="game-main">
+                    <!-- 역할 및 상태 표시 -->
+                    <div class="status-banner" id="game-status-banner">역할 표시</div>
+                    <div class="instruction-text" id="game-instruction">게임을 시작합니다.</div>
+
+
+                    <div class="chat-area" id="chat-history">
+                        <!-- Q&A 아이템들이 여기에 추가됨 -->
+                    </div>
+                </main>
+
+                <!-- 하단 컨트롤 -->
+                <footer class="game-footer">
+                    <!-- 1. 출제자: 단어 설정 -->
+                    <div id="control-set-word" class="control-panel hidden">
+                        <input type="text" id="secret-word-input" placeholder="비밀 단어를 입력하세요">
+                        <button id="set-word-btn" class="action-btn">단어 결정</button>
+                    </div>
+
+                    <!-- 2. 맞추는 사람: 질문/정답 입력 -->
+                    <div id="control-guess" class="control-panel hidden">
+                        <input type="text" id="guess-input" placeholder="질문하거나 정답을 입력하세요">
+                        <button id="submit-guess-btn" class="action-btn">전송</button>
+                    </div>
+
+                    <!-- 3. 출제자: 판정 -->
+                    <div id="control-judge" class="control-panel hidden">
+                        <div class="judge-question-display">
+                            <span class="badgemini">질문</span>
+                            <span id="judging-text">...</span>
+                        </div>
+                        <div class="judge-buttons">
+                            <button class="judge-btn yes" data-val="yes">예</button>
+                            <button class="judge-btn no" data-val="no">아니오</button>
+                            <button class="judge-btn correct" data-val="correct">정답!</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. 대기중 -->
+                    <div id="control-wait" class="control-panel hidden">
+                        <p>다른 플레이어의 차례입니다...</p>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- 결과 모달 -->
+        <div id="result-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="result-title">라운드 종료!</h2>
+                <p id="result-message">정답은 [사과] 였습니다.</p>
+                <div id="score-board"></div>
+                <button id="next-round-btn" class="primary-btn">다음 라운드</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

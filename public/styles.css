@@ -1,0 +1,133 @@
+:root {
+    --bg-color: #1a1a2e;
+    --card-bg: #16213e;
+    --text-color: #e94560;
+    --text-sub: #b2b2b2;
+    --accent-color: #0f3460;
+    --hover-color: #533483;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.main-header {
+    margin-bottom: 3rem;
+}
+
+.main-header h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.main-header p {
+    color: var(--text-sub);
+    font-size: 1.2rem;
+}
+
+.game-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.game-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.game-card:hover:not(.coming-soon) {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: var(--text-color);
+}
+
+.game-icon {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+}
+
+.game-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.game-info p {
+    color: var(--text-sub);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.btn-play {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    background: linear-gradient(45deg, #e94560, #a92d42);
+    color: white;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.game-card:hover .btn-play {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+}
+
+.coming-soon {
+    opacity: 0.6;
+    cursor: default;
+    background-color: rgba(22, 33, 62, 0.5);
+}
+
+.coming-soon .game-info h2 {
+    color: var(--text-sub);
+}
+
+.main-footer {
+    margin-top: 4rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .main-header h1 {
+        font-size: 2rem;
+    }
+
+    .game-list {
+        grid-template-columns: 1fr;
+    }
+}

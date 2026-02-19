@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>섰다 - 타짜들의 전쟁</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- 메인 메뉴 화면 -->
+        <div id="mainMenu" class="screen active">
+            <div class="container">
+                <h1 class="game-title">
+                    <span class="title-main">섰다</span>
+                    <span class="title-sub">TAJJA</span>
+                </h1>
+
+                <div class="menu-buttons">
+                    <button class="btn btn-primary" id="createRoomBtn">
+                        <span class="btn-icon">🎴</span>
+                        한 판 벌리기
+                    </button>
+                    <button class="btn btn-secondary" id="joinRoomBtn">
+                        <span class="btn-icon">🚪</span>
+                        판에 끼기
+                    </button>
+                </div>
+
+                <div class="info-box" style="margin-top: 50px; color: #888;">
+                    <p>"싸늘하다.. 가슴에 비수가 날아와 꽂힌다.."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 방 만들기 화면 -->
+        <div id="createRoomScreen" class="screen">
+            <div class="container">
+                <h2>판 벌리기</h2>
+
+                <div class="form-group">
+                    <label for="hostName">타짜 이름 (닉네임)</label>
+                    <input type="text" id="hostName" placeholder="고니" maxlength="12">
+                </div>
+
+                <div class="form-group">
+                    <label>밑천 (시작 머니)</label>
+                    <div class="chips-input-group">
+                        <input type="number" id="startChipsInput" value="100000" step="10000">
+                        <span style="color:white; margin-left:5px;">원</span>
+                    </div>
+                    <div class="chips-buttons">
+                        <button class="btn-chip" data-value="10000">+1만</button>
+                        <button class="btn-chip" data-value="50000">+5만</button>
+                        <button class="btn-chip" data-value="100000">+10만</button>
+                        <button class="btn-chip reset" data-value="0">초기화</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>삥 (기본 판돈)</label>
+                    <div class="chips-input-group">
+                        <input type="number" id="anteInput" value="1000" step="500">
+                        <span style="color:white; margin-left:5px;">원</span>
+                    </div>
+                    <div class="chips-buttons">
+                        <button class="btn-chip ante-chip" data-value="500">+500</button>
+                        <button class="btn-chip ante-chip" data-value="1000">+1000</button>
+                        <button class="btn-chip ante-chip" data-value="5000">+5000</button>
+                        <button class="btn-chip ante-chip reset" data-value="0">초기화</button>
+                    </div>
+                </div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn btn-secondary" id="backFromCreate">뒤로</button>
+                    <button class="btn btn-primary" id="confirmCreate">판 깔기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 방 참가 화면 -->
+        <div id="joinRoomScreen" class="screen">
+            <div class="container">
+                <h2>판에 끼기</h2>
+
+                <div class="form-group">
+                    <label for="guestName">타짜 이름</label>
+                    <input type="text" id="guestName" placeholder="아귀" maxlength="12">
+                </div>
+
+                <div class="form-group">
+                    <label for="roomCode">비밀 구호 (방 코드)</label>
+                    <input type="text" id="roomCode" placeholder="코드 입력" maxlength="6"
+                        style="text-transform: uppercase;">
+                </div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn btn-secondary" id="backFromJoin">뒤로</button>
+                    <button class="btn btn-primary" id="confirmJoin">입장</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 대기실 화면 -->
+        <div id="lobbyScreen" class="screen">
+            <div class="container">
+                <div class="lobby-header">
+                    <h2>선수 대기실</h2>
+                    <div class="room-code-display">
+                        <span class="label">비밀 구호:</span>
+                        <span class="code" id="lobbyRoomCode">------</span>
+                        <button class="btn-copy" id="copyRoomCode" title="복사"
+                            style="background:none; border:none; cursor:pointer;">📋</button>
+                    </div>
+                </div>
+
+                <div class="players-list" id="playersList">
+                    <!-- 플레이어 목록 -->
+                </div>
+
+                <div class="lobby-info">
+                    <p id="waitingMessage">호구들이 오기를 기다리는 중...</p>
+                </div>
+
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-secondary" id="leaveLobby">판 엎기(나가기)</button>
+                    <button class="btn btn-primary" id="startGameBtn" style="display: none;">패 돌리기(시작)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 게임 화면 -->
+        <div id="gameScreen" class="screen">
+            <div class="game-container">
+                <!-- 게임 헤더 -->
+                <div class="game-header">
+                    <div class="game-info">
+                        <h3>섯다 <span id="headerRoomCode" style="font-size:0.8rem; color:#888;"></span></h3>
+                        <div class="round-info" id="roundInfo">제 1판</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;"
+                            id="btnGuide">설명서</button>
+                    </div>
+                </div>
+
+                <!-- 상대방 정보 영역 -->
+                <div id="opponentsArea">
+                    <!-- JS로 추가됨 -->
+                </div>
+
+                <!-- 게임 테이블 (중앙) -->
+                <div class="game-table-area">
+                    <div id="tableCenter">
+                        <div class="pot-money">
+                            판돈: <span id="potAmount">0</span>원
+                        </div>
+                        <div id="messageArea">
+                            게임 시작 대기 중...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 내 패 영역 -->
+                <div class="my-area-wrapper">
+                    <div class="my-hand-area">
+                        <div class="my-info">
+                            <span class="my-name" id="myDetailsName">나</span>
+                            <span class="my-chips" id="myDetailsChips">0원</span>
+                        </div>
+
+                        <div id="myHand">
+                            <div class="card card-back"></div>
+                            <div class="card card-back"></div>
+                        </div>
+                        <div id="myRankDisplay" class="my-rank-display"></div>
+                        <div id="actionButtons" style="display: none;">
+                            <button class="btn btn-action btn-die" id="dieBtn">다이</button>
+                            <button class="btn btn-action btn-call" id="callBtn">콜</button>
+                            <button class="btn btn-action btn-half" id="halfBtn">하프</button>
+                            <button class="btn btn-action btn-ddadang" id="ddadangBtn">따당</button>
+                            <button class="btn btn-action btn-allin" id="allinBtn">올인</button>
+                        </div>
+                    </div>
+
+                    <!-- 족보 가이드 패널 -->
+                    <div class="jokbo-panel" id="jokboPanel">
+                        <div class="jokbo-header">족보</div>
+                        <ul class="jokbo-list-mini">
+                            <li data-rank="3800">38광땡</li>
+                            <li data-rank="2000">13/18광땡</li>
+                            <li data-rank="1000">땡 (장땡)</li>
+                            <li data-rank="900">알리</li>
+                            <li data-rank="800">독사</li>
+                            <li data-rank="700">구삥</li>
+                            <li data-rank="600">장삥</li>
+                            <li data-rank="500">장사</li>
+                            <li data-rank="400">세륙</li>
+                            <li data-rank="9">갑오</li>
+                            <li data-rank="0">끗 / 망통</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 다음 판 버튼 (게임 종료 후) -->
+                <div id="nextRoundArea" style="display:none; text-align:center; padding:10px;">
+                    <button class="btn btn-primary" id="nextRoundBtn">다음 판 돌리기</button>
+                    <button class="btn btn-secondary" id="exitGameBtn">나가기</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="guideModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color:var(--gold-color); border-bottom:1px solid #555; padding-bottom:10px;">게임 설명서</h3>
+            <div class="guide-section">
+                <h4 style="color:#ddd; margin:10px 0 5px;">📜 진행 방식</h4>
+                <p style="font-size:0.9rem; line-height:1.6; color:#aaa;">
+                    1. 각 타짜는 화투패 2장을 받습니다.<br>
+                    2. 선(첫 번째 플레이어)부터 배팅합니다.<br>
+                    3. 모든 생존자가 같은 금액을 걸면 쇼다운.<br>
+                    4. 족보가 높은 쪽이 판돈을 가져갑니다.
+                </p>
+            </div>
+            <div class="guide-section">
+                <h4 style="color:#ddd; margin:10px 0 5px;">💰 배팅 용어</h4>
+                <div class="jokbo-list">
+                    <div><span class="jokbo-rank">콜</span> <span style="font-size:0.8rem; color:#aaa;">상대가 건 금액에
+                            맞춤</span></div>
+                    <div><span class="jokbo-rank">하프</span> <span style="font-size:0.8rem; color:#aaa;">콜 + 현재 판돈의 절반
+                            추가</span></div>
+                    <div><span class="jokbo-rank">따당</span> <span style="font-size:0.8rem; color:#aaa;">콜 + 현재 배팅의 2배
+                            추가</span></div>
+                    <div><span class="jokbo-rank">다이</span> <span style="font-size:0.8rem; color:#aaa;">포기 (건 돈
+                            잃음)</span></div>
+                    <div><span class="jokbo-rank">올인</span> <span style="font-size:0.8rem; color:#aaa;">남은 칩 전부
+                            걸기</span></div>
+                </div>
+            </div>
+            <div class="guide-section">
+                <h4 style="color:#ddd; margin:10px 0 5px;">🎴 특수 족보</h4>
+                <div class="jokbo-list">
+                    <div><span class="jokbo-rank">암행어사</span> <span style="font-size:0.8rem; color:#aaa;">(4열+7열) →
+                            13/18광땡 잡음</span></div>
+                    <div><span class="jokbo-rank">땡잡이</span> <span style="font-size:0.8rem; color:#aaa;">(3광+7열) → 1땡~9땡
+                            잡음</span></div>
+                    <div><span class="jokbo-rank">멍텅구리 구사</span> <span style="font-size:0.8rem; color:#aaa;">(4열+9열) →
+                            장땡 이하 재경기</span></div>
+                </div>
+            </div>
+            <div class="guide-section">
+                <h4 style="color:#ddd; margin:10px 0 5px;">🏆 족보 순위</h4>
+                <p style="font-size:0.8rem; color:#888; margin-bottom:5px;">(높음 → 낮음)</p>
+                <div class="jokbo-list" style="font-size:0.9rem;">
+                    <div>38광땡 > 13/18광땡 > 장땡~삥땡 > 알리 > 독사 > 구삥 > 장삥 > 장사 > 세륙 > 갑오 > 8~1끗 > 망통</div>
+                </div>
+            </div>
+
+            <button class="btn btn-secondary" style="width:100%; margin-top:20px;"
+                onclick="document.getElementById('guideModal').style.display='none'">닫기</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

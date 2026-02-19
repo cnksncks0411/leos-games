@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>윷놀이 - 레오네 보드게임</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- 메인 메뉴 -->
+        <div id="mainMenu" class="screen active">
+            <div class="container">
+                <div class="game-title">
+                    <span class="title-main">윷놀이</span>
+                    <span class="title-sub">전통 게임으로 연대하고 경쟁하세요</span>
+                </div>
+
+                <div class="menu-buttons">
+                    <button id="btnGoToCreate" class="btn btn-primary">
+                        <span class="btn-icon">🎮</span>
+                        방 만들기
+                    </button>
+                    <button id="btnGoToJoin" class="btn btn-secondary">
+                        <span class="btn-icon">🚪</span>
+                        방 참가하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 방 만들기 -->
+        <div id="createRoom" class="screen">
+            <div class="container">
+                <h2>방 만들기</h2>
+
+                <div class="form-group">
+                    <label>닉네임</label>
+                    <input type="text" id="createNickname" placeholder="닉네임을 입력하세요" maxlength="10">
+                </div>
+
+                <div class="form-group">
+                    <label>참가 인원</label>
+                    <div class="player-count-selector">
+                        <button class="player-count-btn" data-value="2">2명</button>
+                        <button class="player-count-btn active" data-value="3">3명</button>
+                        <button class="player-count-btn" data-value="4">4명</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>말 개수</label>
+                    <div class="player-count-selector">
+                        <button class="token-count-btn" data-value="3">3개</button>
+                        <button class="token-count-btn active" data-value="4">4개</button>
+                        <button class="token-count-btn" data-value="5">5개</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>빽도 사용</label>
+                    <div class="player-count-selector" style="grid-template-columns: 1fr 1fr;">
+                        <button class="backdo-btn active" data-value="true">사용</button>
+                        <button class="backdo-btn" data-value="false">사용 안 함</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>낙 사용</label>
+                    <div class="player-count-selector" style="grid-template-columns: 1fr 1fr;">
+                        <button class="nak-btn" data-value="true">사용</button>
+                        <button class="nak-btn active" data-value="false">사용 안 함</button>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p>💡 <strong>빽도:</strong> 도가 나오면 뒤로 한 칸 이동합니다.</p>
+                    <p>💡 <strong>낙:</strong> 잡은 말을 완전히 제거합니다 (재시작 불가).</p>
+                </div>
+
+                <div class="button-group">
+                    <button id="btnBackFromCreate" class="btn btn-secondary">뒤로가기</button>
+                    <button id="btnConfirmCreate" class="btn btn-primary">방 생성</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 방 참가하기 -->
+        <div id="joinRoom" class="screen">
+            <div class="container">
+                <h2>방 참가하기</h2>
+
+                <div class="form-group">
+                    <label>닉네임</label>
+                    <input type="text" id="joinNickname" placeholder="닉네임을 입력하세요" maxlength="10">
+                </div>
+
+                <div class="form-group">
+                    <label>방 코드</label>
+                    <input type="text" id="joinRoomId" placeholder="4자리 숫자 코드" maxlength="4">
+                </div>
+
+                <div class="button-group">
+                    <button id="btnBackFromJoin" class="btn btn-secondary">뒤로가기</button>
+                    <button id="btnConfirmJoin" class="btn btn-primary">참가하기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 대기실 -->
+        <div id="lobby" class="screen">
+            <div class="container" style="max-width: 700px;">
+                <div class="lobby-header">
+                    <div class="room-code-display">
+                        <span class="label">방 코드:</span>
+                        <span class="code" id="roomIdDisplay">----</span>
+                    </div>
+                    <div id="lobbySettings" style="color: var(--text-muted); font-size: 0.95rem;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>참가자 목록</label>
+                    <div id="playerList" class="players-list"></div>
+                </div>
+
+                <div class="lobby-info">
+                    <p id="waitingMsg">참가자를 기다리는 중...</p>
+                </div>
+
+                <div class="button-group">
+                    <button id="btnLeaveLobby" class="btn btn-secondary">나가기</button>
+                    <button id="btnStartGame" class="btn btn-primary" style="display: none;">게임 시작</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 게임 화면 -->
+        <div id="game" class="screen">
+            <div class="game-container">
+                <!-- 게임 헤더 -->
+                <div class="game-header">
+                    <div class="game-info">
+                        <h3 id="turnIndicator">게임 준비 중...</h3>
+                    </div>
+                    <div class="players-info" id="playersStatus">
+                        <!-- 플레이어 상태 표시 -->
+                    </div>
+                </div>
+
+                <!-- 게임 테이블 (윷판) -->
+                <div class="game-table">
+                    <div id="yutBoard" class="yut-board">
+                        <!-- 노드 생성 JS -->
+                    </div>
+                </div>
+
+                <!-- 플레이어 영역 (윷 던지기, 이동 선택) -->
+                <div class="player-area">
+                    <div class="yut-control-area">
+                        <div class="yut-sticks" id="yutDisplay">
+                            <div class="stick"></div>
+                            <div class="stick"></div>
+                            <div class="stick"></div>
+                            <div class="stick"></div>
+                        </div>
+                        <div id="yutResultText" class="yut-result">윷을 던져주세요</div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="throwBtn" class="btn btn-primary" disabled>윷 던지기</button>
+                    </div>
+
+                    <div class="moves-display">
+                        <div class="hand-label">
+                            <span>사용 가능한 윷</span>
+                        </div>
+                        <div id="movesList" class="moves-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 토스트 -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

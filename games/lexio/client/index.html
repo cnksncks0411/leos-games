@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>렉시오 - 온라인 보드게임</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- 메인 메뉴 화면 -->
+        <div id="mainMenu" class="screen active">
+            <div class="container">
+                <h1 class="game-title">
+                    <span class="title-main">렉시오</span>
+                    <span class="title-sub">LEXIO</span>
+                </h1>
+
+                <div class="menu-buttons">
+                    <button class="btn btn-primary" id="createRoomBtn">
+                        <span class="btn-icon">🎮</span>
+                        방 만들기
+                    </button>
+                    <button class="btn btn-secondary" id="joinRoomBtn">
+                        <span class="btn-icon">🚪</span>
+                        방 참가하기
+                    </button>
+                </div>
+
+                <div class="info-box">
+                    <p>💡 같은 네트워크(Wi-Fi)에 연결된 친구들과 함께 플레이하세요!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 방 만들기 화면 -->
+        <div id="createRoomScreen" class="screen">
+            <div class="container">
+                <h2>방 만들기</h2>
+
+                <div class="form-group">
+                    <label for="hostName">닉네임</label>
+                    <input type="text" id="hostName" placeholder="닉네임을 입력하세요" maxlength="12">
+                </div>
+
+                <div class="form-group">
+                    <label for="playerCount">플레이어 수</label>
+                    <div class="player-count-selector">
+                        <button class="player-count-btn" data-count="2">2명</button>
+                        <button class="player-count-btn active" data-count="3">3명</button>
+                        <button class="player-count-btn" data-count="4">4명</button>
+                        <button class="player-count-btn" data-count="5">5명</button>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="backFromCreate">돌아가기</button>
+                    <button class="btn btn-primary" id="confirmCreate">방 만들기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 방 참가 화면 -->
+        <div id="joinRoomScreen" class="screen">
+            <div class="container">
+                <h2>방 참가하기</h2>
+
+                <div class="form-group">
+                    <label for="guestName">닉네임</label>
+                    <input type="text" id="guestName" placeholder="닉네임을 입력하세요" maxlength="12">
+                </div>
+
+                <div class="form-group">
+                    <label for="roomCode">방 코드</label>
+                    <input type="text" id="roomCode" placeholder="6자리 방 코드를 입력하세요" maxlength="6"
+                        style="text-transform: uppercase;">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="backFromJoin">돌아가기</button>
+                    <button class="btn btn-primary" id="confirmJoin">참가하기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 대기실 화면 -->
+        <div id="lobbyScreen" class="screen">
+            <div class="container">
+                <div class="lobby-header">
+                    <h2>대기실</h2>
+                    <div class="room-code-display">
+                        <span class="label">방 코드:</span>
+                        <span class="code" id="lobbyRoomCode">------</span>
+                        <button class="btn-copy" id="copyRoomCode" title="복사">📋</button>
+                    </div>
+                </div>
+
+                <div class="players-list" id="playersList">
+                    <!-- 플레이어 목록이 여기에 표시됩니다 -->
+                </div>
+
+                <div class="lobby-info">
+                    <p id="waitingMessage">친구들이 들어오기를 기다리는 중...</p>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="leaveLobby">나가기</button>
+                    <button class="btn btn-primary" id="startGameBtn" style="display: none;">게임 시작</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 게임 화면 -->
+        <div id="gameScreen" class="screen">
+            <div class="game-container">
+                <!-- 게임 헤더 -->
+                <div class="game-header">
+                    <div class="game-info">
+                        <h3>렉시오</h3>
+                        <div class="round-info" id="roundInfo">라운드 1</div>
+                    </div>
+                    <div class="players-info" id="playersInfo">
+                        <!-- 플레이어 정보가 여기에 표시됩니다 -->
+                    </div>
+                    <button class="btn btn-rules" id="showRulesBtn" title="족보 보기">
+                        <span class="btn-icon">📖</span>
+                        족보
+                    </button>
+                </div>
+
+                <!-- 게임 테이블 -->
+                <div class="game-table">
+                    <div class="table-center">
+                        <div id="tableCards" class="table-cards">
+                            <!-- 테이블에 놓인 카드들 -->
+                        </div>
+                        <div id="turnIndicator" class="turn-indicator">
+                            당신의 차례입니다
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 플레이어 핸드 -->
+                <div class="player-area">
+                    <div class="hand-header">
+                        <div class="hand-label">
+                            <span>내 카드</span>
+                            <span id="handCount">0장</span>
+                        </div>
+                        <div class="sort-buttons">
+                            <button class="btn-sort" id="sortByNum" title="숫자순 정렬">🔢 숫자순</button>
+                            <button class="btn-sort" id="sortBySuit" title="무늬순 정렬">🎨 무늬순</button>
+                        </div>
+                    </div>
+                    <div id="playerHand" class="player-hand">
+                        <!-- 플레이어의 카드들 -->
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="passBtn">패스</button>
+                        <button class="btn btn-primary" id="playBtn" disabled>카드 내기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 라운드 종료 모달 -->
+        <div id="roundEndModal" class="modal">
+            <div class="modal-content">
+                <h2>라운드 종료!</h2>
+                <div id="roundResults">
+                    <!-- 결과가 여기에 표시됩니다 -->
+                </div>
+                <button class="btn btn-primary" id="nextRoundBtn">다음 라운드</button>
+            </div>
+        </div>
+
+        <!-- 족보 모달 -->
+        <div id="rulesModal" class="modal">
+            <div class="modal-content rules-modal">
+                <div class="modal-header">
+                    <h2>📖 렉시오 족보 & 규칙</h2>
+                    <button class="btn-close" id="closeRulesBtn">✕</button>
+                </div>
+
+                <div class="rules-content">
+                    <!-- 카드 강함 -->
+                    <section class="rules-section">
+                        <h3>🎴 카드 강함</h3>
+                        <div class="rule-item">
+                            <strong>숫자:</strong>
+                            <div class="strength-display">
+                                <span class="strongest">2</span> &gt;
+                                <span class="strong">1</span> &gt;
+                                <span>15</span> &gt;
+                                <span>14</span> &gt;
+                                ... &gt;
+                                <span class="weakest">3</span>
+                            </div>
+                        </div>
+                        <div class="rule-item">
+                            <strong>무늬:</strong>
+                            <div class="strength-display">
+                                <span style="color: var(--sun-color)">☀️ 해</span> &gt;
+                                <span style="color: var(--moon-color)">🌙 달</span> &gt;
+                                <span style="color: var(--star-color)">⭐ 별</span> &gt;
+                                <span style="color: var(--cloud-color)">☁️ 구름</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 낼 수 있는 조합 -->
+                    <section class="rules-section">
+                        <h3>🃏 낼 수 있는 조합</h3>
+                        <div class="combo-list">
+                            <div class="combo-item">
+                                <span class="combo-name">싱글 (1장)</span>
+                                <span class="combo-desc">카드 1장</span>
+                            </div>
+                            <div class="combo-item">
+                                <span class="combo-name">페어 (2장)</span>
+                                <span class="combo-desc">같은 숫자 2장</span>
+                            </div>
+                            <div class="combo-item">
+                                <span class="combo-name">트리플 (3장)</span>
+                                <span class="combo-desc">같은 숫자 3장</span>
+                            </div>
+                            <div class="combo-item highlight">
+                                <span class="combo-name">메이드 (5장)</span>
+                                <span class="combo-desc">포커 족보 (아래 참조)</span>
+                            </div>
+                        </div>
+                        <p class="note">⚠️ 4장은 불가능합니다!</p>
+                    </section>
+
+                    <!-- 5장 족보 -->
+                    <section class="rules-section">
+                        <h3>👑 5장 족보 (메이드)</h3>
+                        <div class="made-list">
+                            <div class="made-item rank-5">
+                                <div class="made-header">
+                                    <span class="rank">1위</span>
+                                    <span class="made-name">스트레이트 플러시</span>
+                                </div>
+                                <p class="made-desc">무늬 같고 연속된 5장</p>
+                            </div>
+                            <div class="made-item rank-4">
+                                <div class="made-header">
+                                    <span class="rank">2위</span>
+                                    <span class="made-name">포카드</span>
+                                </div>
+                                <p class="made-desc">같은 숫자 4장 + 다른 숫자 1장</p>
+                            </div>
+                            <div class="made-item rank-3">
+                                <div class="made-header">
+                                    <span class="rank">3위</span>
+                                    <span class="made-name">풀하우스</span>
+                                </div>
+                                <p class="made-desc">트리플(3장) + 페어(2장)</p>
+                            </div>
+                            <div class="made-item rank-2">
+                                <div class="made-header">
+                                    <span class="rank">4위</span>
+                                    <span class="made-name">플러시</span>
+                                </div>
+                                <p class="made-desc">무늬가 같은 5장</p>
+                            </div>
+                            <div class="made-item rank-1">
+                                <div class="made-header">
+                                    <span class="rank">5위</span>
+                                    <span class="made-name">스트레이트</span>
+                                </div>
+                                <p class="made-desc">연속된 5장 (무늬 상관없음)</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 특수 규칙 -->
+                    <section class="rules-section">
+                        <h3>⚡ 특수 규칙</h3>
+                        <div class="special-rules">
+                            <div class="special-rule">
+                                <strong>숫자 '1'의 특수성:</strong>
+                                <p>스트레이트에서 최고값으로 사용 가능</p>
+                                <p class="example">예: 6-7-8-9-1 ⭕ (가능)</p>
+                                <p class="example">예: 13-14-15-1-2 ❌ (불가능, 1 다음 2로 이어질 수 없음)</p>
+                            </div>
+                            <div class="special-rule">
+                                <strong>같은 개수 규칙:</strong>
+                                <p>선이 낸 개수와 같은 개수로만 낼 수 있습니다</p>
+                                <p class="example">예: 페어(2장)를 냈으면 더 강한 페어(2장)로만 대응</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 게임 진행 -->
+                    <section class="rules-section">
+                        <h3>🎯 게임 진행</h3>
+                        <ol class="game-flow">
+                            <li>구름3을 가진 플레이어가 선(Lead)</li>
+                            <li>선이 원하는 조합(1/2/3/5장)으로 시작</li>
+                            <li>다음 플레이어는 같은 개수로 더 강한 조합을 내야 함</li>
+                            <li>못 내면 패스 (다음 차례에 다시 낼 수 있음)</li>
+                            <li>모두 패스하면 마지막으로 낸 사람이 새로운 선</li>
+                            <li>누군가 카드를 모두 없애면 라운드 종료</li>
+                        </ol>
+                    </section>
+
+                    <!-- 점수 계산 -->
+                    <section class="rules-section">
+                        <h3>💯 점수 계산</h3>
+                        <div class="score-rules">
+                            <div class="score-item win">
+                                <strong>승자 (카드 0장):</strong>
+                                <p>다른 플레이어들의 남은 카드 개수만큼 득점</p>
+                            </div>
+                            <div class="score-item lose">
+                                <strong>패자 (카드 남음):</strong>
+                                <p>자신의 남은 카드 개수만큼 감점</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <button class="btn btn-primary" id="closeRulesBtn2">닫기</button>
+            </div>
+        </div>
+
+        <!-- 에러 토스트 -->
+        <div id="errorToast" class="toast">
+            <span id="errorMessage"></span>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,979 @@
+:root {
+    --bg-color: #1a1a1a;
+    --table-color: #0f3d0f;
+    /* 짙은 녹색 (화투 담요) */
+    --gold-color: #d4af37;
+    --red-color: #b30000;
+    --text-color: #e0e0e0;
+    --card-width: 80px;
+    /* 카드 크기 확대 */
+    --card-height: 120px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&display=swap');
+
+body {
+    font-family: 'Nanum Myeongjo', serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-image: radial-gradient(circle, #2c2c2c 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    min-height: 100vh;
+    /* height 대신 min-height 사용 */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    /* 패딩 추가 */
+    box-sizing: border-box;
+    /* 패딩 포함 계산 */
+    transition: opacity 0.5s ease;
+}
+
+.screen.active {
+    display: flex;
+    z-index: 10;
+}
+
+/* 메인 메뉴 */
+.title-main {
+    font-size: 5rem;
+    color: var(--red-color);
+    text-shadow: 2px 2px 0px #000, -1px -1px 0 #000;
+    display: block;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--gold-color);
+    padding-bottom: 20px;
+}
+
+.title-sub {
+    font-size: 1.5rem;
+    color: var(--gold-color);
+    letter-spacing: 5px;
+}
+
+.menu-buttons {
+    display: flex;
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.btn {
+    padding: 15px 20px;
+    /* 좌우 패딩 축소 */
+    font-size: 1.1rem;
+    /* 폰트 사이즈 약간 축소 */
+    border: 2px solid var(--gold-color);
+    background-color: #000;
+    color: var(--gold-color);
+    cursor: pointer;
+    font-family: 'Nanum Myeongjo', serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    white-space: nowrap;
+    /* 줄바꿈 방지 */
+}
+
+.btn:hover {
+    background-color: var(--gold-color);
+    color: #000;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+}
+
+.btn-primary {
+    background-color: var(--red-color);
+    color: white;
+    border-color: var(--red-color);
+}
+
+.btn-primary:hover {
+    background-color: #ff0000;
+    border-color: #ff0000;
+    color: white;
+}
+
+/* 입력 폼 */
+.container {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border: 1px solid var(--gold-color);
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    width: 90%;
+    max-width: 500px;
+    /* 최대 너비 제한 */
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--gold-color);
+}
+
+input,
+.form-select {
+    width: 100%;
+    padding: 12px;
+    background-color: #333;
+    border: 1px solid #555;
+    color: white;
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 1rem;
+    box-sizing: border-box;
+    /* 패딩 포함 */
+}
+
+.chips-input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.chips-buttons {
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.btn-chip {
+    flex: 1;
+    padding: 8px 5px;
+    font-size: 0.9rem;
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.btn-chip:hover {
+    background-color: #555;
+    border-color: #888;
+}
+
+.btn-chip:active {
+    background-color: #666;
+}
+
+.btn-chip.reset {
+    background-color: #500;
+    border-color: #800;
+}
+
+.btn-chip.reset:hover {
+    background-color: #700;
+}
+
+/* 대기실 */
+.lobby-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 20px;
+}
+
+.room-code-display {
+    font-size: 2rem;
+    color: var(--gold-color);
+    letter-spacing: 3px;
+    font-weight: bold;
+}
+
+.players-list {
+    min-height: 100px;
+    margin-bottom: 30px;
+}
+
+.player-item {
+    padding: 15px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 오야 표시는 JS에서 이름 옆에 아이콘 추가로 변경함에 따라 CSS content 제거 */
+.player-item.host::after {
+    content: none;
+}
+
+.player-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.host-badge {
+    color: var(--gold-color);
+    font-size: 0.9rem;
+    border: 1px solid var(--gold-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: rgba(212, 175, 55, 0.1);
+}
+
+/* 게임 화면 */
+/* 대기실 버튼 그룹 */
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.button-group .btn {
+    flex: 1;
+    max-width: 200px;
+}
+
+/* 게임 화면 */
+#gameScreen {
+    background-color: var(--table-color);
+    padding: 0;
+    /* 전체 화면 사용 */
+}
+
+.game-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    /* Flexbox 사용 */
+    flex-direction: column;
+    /* 세로 정렬 */
+    background-color: var(--table-color);
+    box-shadow: inset 0 0 100px #000;
+    position: relative;
+    overflow: hidden;
+    padding: 30px 0;
+    box-sizing: border-box;
+}
+
+.game-header {
+    flex: 0 0 auto;
+    /* 크기 고정 */
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+    z-index: 5;
+}
+
+.round-info {
+    color: var(--gold-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* 상대방 영역 */
+#opponentsArea {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* opponent-item styled below with betting section */
+
+.opponent-name {
+    font-size: 0.8rem;
+    color: #fff;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+}
+
+.opponent-chips {
+    font-size: 0.7rem;
+    color: var(--gold-color);
+    margin-bottom: 5px;
+}
+
+.opponent-hand {
+    display: flex;
+    gap: 2px;
+}
+
+.opponent-card {
+    width: 30px;
+    /* 상대방 카드는 작게 */
+    height: 45px;
+    background: url('assets/img/back.png') no-repeat center center;
+    background-size: cover;
+    border: 1px solid #fff;
+    border-radius: 3px;
+}
+
+.game-table-area {
+    flex: 1;
+    /* 남은 공간 차지 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+#tableCenter {
+    text-align: center;
+}
+
+.pot-money {
+    font-size: 2rem;
+    color: var(--gold-color);
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+#messageArea {
+    color: #fff;
+    opacity: 0.9;
+    font-size: 1.2rem;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+/* 나의 패 영역 */
+.my-area-wrapper {
+    flex: 0 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    padding-bottom: 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+}
+
+.my-hand-area {
+    text-align: center;
+    position: relative;
+}
+
+.my-info {
+    position: absolute;
+    top: -50px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 5;
+}
+
+.my-name {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.my-chips {
+    font-size: 1rem;
+    color: var(--gold-color);
+    font-weight: bold;
+}
+
+
+/* Flexbox로 중앙 정렬 */
+#myHand {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.my-hand-area h3 {
+    margin: 0 0 10px 0;
+    color: var(--gold-color);
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+#actionButtons {
+    margin-top: 15px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* 배팅 액션 버튼 */
+.btn-action {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    font-family: 'Nanum Myeongjo', serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.btn-action:active {
+    transform: scale(0.95);
+}
+
+.btn-die {
+    background: #555;
+    color: #ddd;
+    border-color: #777;
+}
+
+.btn-die:hover {
+    background: #666;
+    border-color: #999;
+}
+
+.btn-call {
+    background: #1a7a1a;
+    color: #fff;
+    border-color: #2a9a2a;
+}
+
+.btn-call:hover {
+    background: #2a9a2a;
+    border-color: #3ab03a;
+    box-shadow: 0 0 12px rgba(42, 154, 42, 0.5);
+}
+
+.btn-half {
+    background: #1a4a8a;
+    color: #fff;
+    border-color: #2a6aba;
+}
+
+.btn-half:hover {
+    background: #2a6aba;
+    border-color: #3a8ada;
+    box-shadow: 0 0 12px rgba(42, 106, 186, 0.5);
+}
+
+.btn-ddadang {
+    background: var(--red-color);
+    color: #fff;
+    border-color: #d00;
+}
+
+.btn-ddadang:hover {
+    background: #d00;
+    border-color: #f22;
+    box-shadow: 0 0 12px rgba(220, 0, 0, 0.5);
+}
+
+.btn-allin {
+    background: linear-gradient(135deg, #b8860b, #d4af37);
+    color: #000;
+    border-color: var(--gold-color);
+    font-weight: bold;
+}
+
+.btn-allin:hover {
+    background: linear-gradient(135deg, #d4af37, #ffd700);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+}
+
+/* 상대방 베팅 정보 */
+.opponent-bet {
+    font-size: 0.65rem;
+    color: #aaa;
+    margin-bottom: 3px;
+}
+
+/* 상대방 카드 공개 */
+.opponent-card-revealed {
+    width: 34px;
+    height: 48px;
+    background-color: #f0f0e0;
+    border: 1px solid #999;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.6rem;
+    color: #222;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* 상대방 아이템 턴 강조 */
+.opponent-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 8px;
+    width: 90px;
+    border: 2px solid transparent;
+    transition: border-color 0.3s, opacity 0.3s;
+}
+
+/* 다음 판 영역 */
+#nextRoundArea {
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.card {
+    width: var(--card-width);
+    height: var(--card-height);
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: serif;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+    user-select: none;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-back {
+    background: url('assets/img/back.png') no-repeat center center !important;
+    background-size: cover !important;
+    border: 1px solid #aaa;
+}
+
+.card-back>* {
+    display: none !important;
+}
+
+.card-content {
+    width: 100%;
+    height: 100%;
+    /* 개별 이미지 (JS에서 설정), 꽉 차게 */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    border-radius: 4px;
+}
+
+/* 족보 가이드 모달 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #222;
+    border: 2px solid var(--gold-color);
+    padding: 30px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 550px;
+    max-height: 80%;
+    overflow-y: auto;
+    color: #fff;
+    text-align: left;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+.guide-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #444;
+}
+
+.guide-section:last-child {
+    border-bottom: none;
+}
+
+.jokbo-list div {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #444;
+    padding-bottom: 3px;
+}
+
+/* 족보 패널 */
+.jokbo-panel {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 10px;
+    margin-left: 20px;
+    width: 140px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.8rem;
+    color: #aaa;
+    display: flex;
+    flex-direction: column;
+}
+
+.jokbo-header {
+    text-align: center;
+    color: var(--gold-color);
+    border-bottom: 1px solid #555;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    font-weight: bold;
+}
+
+.jokbo-list-mini {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.jokbo-list-mini li {
+    padding: 2px 5px;
+    border-bottom: 1px solid #333;
+}
+
+.jokbo-list-mini li.active {
+    color: #ff0;
+    background-color: rgba(212, 175, 55, 0.3);
+    font-weight: bold;
+}
+
+/* 내 족보 인라인 표시 */
+.my-rank-display {
+    text-align: center;
+    margin: 8px 0 4px;
+    padding: 6px 16px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid var(--gold-color);
+    border-radius: 20px;
+    color: var(--gold-color);
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: none;
+    animation: rankFadeIn 0.5s ease;
+}
+
+.my-rank-display.visible {
+    display: inline-block;
+}
+
+.my-rank-display.special {
+    color: #ff0;
+    border-color: #ff0;
+    background: rgba(255, 255, 0, 0.15);
+    text-shadow: 0 0 8px rgba(255, 255, 0, 0.5);
+}
+
+@keyframes rankFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 베팅 미리보기 */
+.bet-preview {
+    display: block;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: normal;
+    margin-top: 2px;
+    text-shadow: none;
+}
+
+.btn-die .bet-preview {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-allin .bet-preview {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* 플레이어 입장 알림 */
+.join-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(42, 154, 42, 0.9);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 200;
+    animation: notifSlide 0.3s ease, notifFade 0.5s ease 2.5s forwards;
+    pointer-events: none;
+}
+
+@keyframes notifSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes notifFade {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* ========== 모바일 반응형 ========== */
+@media (max-width: 600px) {
+    :root {
+        --card-width: 60px;
+        --card-height: 90px;
+    }
+
+    .screen {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 20px 15px;
+    }
+
+    .title-main {
+        font-size: 3rem;
+        padding-bottom: 12px;
+    }
+
+    .title-sub {
+        font-size: 1rem;
+    }
+
+    .menu-buttons {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+    }
+
+    /* 게임 화면 */
+    .game-container {
+        padding: 10px 0;
+    }
+
+    .game-header {
+        padding: 10px 12px;
+    }
+
+    .game-header h3 {
+        font-size: 0.9rem;
+    }
+
+    .round-info {
+        font-size: 0.95rem;
+    }
+
+    .pot-money {
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+    }
+
+    #messageArea {
+        font-size: 0.85rem;
+        padding: 8px 14px;
+        max-width: 90%;
+        word-break: keep-all;
+    }
+
+    /* 상대방 영역 */
+    #opponentsArea {
+        gap: 6px;
+        padding: 5px;
+    }
+
+    .opponent-item {
+        width: 72px;
+        padding: 4px 6px;
+        border-radius: 6px;
+    }
+
+    .opponent-name {
+        font-size: 0.65rem;
+    }
+
+    .opponent-chips {
+        font-size: 0.6rem;
+    }
+
+    .opponent-bet {
+        font-size: 0.55rem;
+    }
+
+    .opponent-card {
+        width: 22px;
+        height: 33px;
+    }
+
+    /* 내 패 영역 */
+    .my-area-wrapper {
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 10px;
+    }
+
+    .my-info {
+        position: relative;
+        top: auto;
+        margin-bottom: 5px;
+    }
+
+    .my-name {
+        font-size: 0.8rem;
+    }
+
+    .my-chips {
+        font-size: 0.85rem;
+    }
+
+    #myHand {
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    /* 족보 패널 - 모바일에서 숨김 */
+    .jokbo-panel {
+        display: none;
+    }
+
+    /* 액션 버튼 */
+    #actionButtons {
+        gap: 5px;
+        margin-top: 8px;
+        padding: 0 5px;
+    }
+
+    .btn-action {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+        border-radius: 5px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .bet-preview {
+        font-size: 0.55rem;
+    }
+
+    /* 다음 판 영역 */
+    #nextRoundArea {
+        padding: 8px;
+    }
+
+    #nextRoundArea .btn {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
+
+    /* 로비 */
+    .lobby-header {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+
+    .room-code-display {
+        font-size: 1.4rem;
+    }
+
+    .player-item {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .button-group {
+        gap: 10px;
+    }
+
+    .button-group .btn {
+        max-width: 160px;
+        font-size: 0.9rem;
+    }
+
+    /* 모달 */
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+        max-height: 85%;
+    }
+
+    /* 폼 */
+    .form-group label {
+        font-size: 0.9rem;
+    }
+
+    .btn-chip {
+        padding: 6px 3px;
+        font-size: 0.75rem;
+    }
+
+    .chips-input-group input {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .my-rank-display {
+        font-size: 0.95rem;
+        padding: 5px 12px;
+    }
+}
